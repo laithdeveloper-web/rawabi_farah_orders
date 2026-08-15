@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>لوحة الطلبات — روابي فرح</title>
+<meta name="description" content="لوحة تحكم لاستقبال وإدارة طلبات مخبز روابي فرح: متابعة الحالة، البحث، التصدير، والطباعة." />
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --green:oklch(0.38 0.09 152); --green-deep:oklch(0.28 0.07 152);
+  --gold:oklch(0.78 0.11 82); --gold-soft:oklch(0.88 0.06 84);
+  --clay:oklch(0.62 0.07 62); --sand:oklch(0.96 0.014 84);
+  --bg:oklch(0.985 0.008 84); --fg:oklch(0.24 0.045 152);
+  --muted:oklch(0.52 0.03 130); --border:oklch(0.9 0.018 90); --card:#fff;
+  --ok:oklch(0.62 0.13 152); --warn:oklch(0.75 0.13 75); --bad:oklch(0.58 0.19 27);
+  --info:oklch(0.58 0.10 240);
+  --gradient-royal:linear-gradient(135deg,var(--green-deep),var(--green) 55%,var(--clay));
+  --gradient-gold:linear-gradient(105deg,var(--clay),var(--gold) 45%,var(--gold-soft));
+  --shadow-soft:0 2px 8px oklch(0.28 0.07 152/.06),0 18px 40px -24px oklch(0.28 0.07 152/.28);
+  --shadow-lift:0 8px 20px oklch(0.28 0.07 152/.1),0 32px 70px -30px oklch(0.28 0.07 152/.4);
+  --glass:oklch(1 0 0/.72); --ease:cubic-bezier(.16,1,.3,1); --radius:.875rem;
+}
+*{box-sizing:border-box;border-color:var(--border)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Cairo","Manrope",sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Cormorant Garamond","Cairo",serif;font-weight:600;margin:0;letter-spacing:-.015em}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border:0;cursor:pointer;font:inherit;font-weight:600;font-size:.85rem;padding:.6rem 1.15rem;border-radius:999px;transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--green);color:var(--sand);box-shadow:var(--shadow-soft)}
+.btn-gold{background:var(--gradient-gold);color:oklch(.26 .06 152)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--green)}
+.btn-sm{padding:.35rem .8rem;font-size:.78rem}
+header.site{position:sticky;top:0;z-index:60;background:var(--glass);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid oklch(1 0 0/.5);box-shadow:var(--shadow-soft)}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .dot{width:42px;height:42px;border-radius:50%;background:var(--gradient-royal);display:grid;place-items:center;color:var(--gold-soft);font-size:1.1rem}
+.brand .n{font-family:"Cormorant Garamond",serif;font-size:1.25rem;font-weight:700;color:var(--green);line-height:1}
+.brand small{color:var(--muted);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase}
+.hactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.live{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--muted)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 1.8s infinite}
+.live.off i{background:var(--muted);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.stats{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));padding:26px 0 10px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-soft)}
+.stat .k{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);font-weight:600}
+.stat .v{font-family:"Cormorant Garamond",serif;font-size:2.1rem;color:var(--green);margin-top:4px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 0}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--border);background:transparent;border-radius:999px;padding:.45rem 1rem;font:inherit;font-size:.82rem;cursor:pointer;color:var(--green)}
+.chip.active{background:var(--green);color:var(--sand);border-color:var(--green)}
+input.search,select.sel{padding:.6rem 1rem;border-radius:999px;border:1px solid var(--border);font:inherit;background:var(--card);color:inherit}
+input.search{min-width:240px;flex:1}
+.tablewrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-soft);overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:900px}
+th{text-align:start;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--clay);padding:14px 16px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--sand)}
+td{padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr{transition:background .3s var(--ease);cursor:pointer}
+tbody tr:hover{background:oklch(.96 .014 84/.7)}
+.num{font-weight:700;color:var(--green)}
+.muted{color:var(--muted);font-size:.8rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.25rem .7rem;font-size:.75rem;font-weight:600;border:1px solid var(--border)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-new{color:var(--info)}.s-prep{color:var(--warn)}.s-out{color:var(--clay)}.s-done{color:var(--ok)}.s-cancel{color:var(--bad)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:oklch(.28 .07 152/.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .4s var(--ease);z-index:70}
+.overlay.open{opacity:1;pointer-events:auto}
+aside.panel{position:fixed;top:0;inset-inline-end:0;height:100%;width:min(460px,100%);background:var(--bg);z-index:80;transform:translateX(-100%);transition:transform .5s var(--ease);display:flex;flex-direction:column;box-shadow:var(--shadow-lift)}
+html[dir="rtl"] aside.panel{transform:translateX(-100%)}
+aside.panel.open{transform:none !important}
+.panel header{padding:20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:var(--gradient-royal);color:var(--sand)}
+.panel header h2{color:#fff;font-size:1.5rem}
+.panel .body{flex:1;overflow:auto;padding:20px;display:grid;gap:16px;align-content:start}
+.kv{display:grid;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.kv span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--clay)}
+.kv strong{font-weight:600}
+.lines{display:grid;gap:8px}
+.line{display:flex;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.86rem}
+.rowsum{display:flex;justify-content:space-between;font-size:.9rem}
+.rowsum.total{font-weight:700;font-size:1.05rem;color:var(--green)}
+.panel footer{padding:18px 20px;border-top:1px solid var(--border);display:grid;gap:10px;background:var(--card)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;bottom:24px;inset-inline-start:50%;transform:translate(50%,20px);background:var(--green-deep);color:var(--sand);padding:.8rem 1.4rem;border-radius:999px;font-size:.85rem;opacity:0;transition:.4s var(--ease);z-index:90;pointer-events:none}
+.toast.show{opacity:1;transform:translate(50%,0)}
+dialog.cfg{border:0;border-radius:var(--radius);padding:0;max-width:520px;width:92%;box-shadow:var(--shadow-lift)}
+dialog::backdrop{background:oklch(.28 .07 152/.45);backdrop-filter:blur(3px)}
+.cfg .in{padding:24px;display:grid;gap:14px}
+.cfg label{display:grid;gap:6px;font-size:.85rem}
+.cfg input{width:100%;padding:.7rem .9rem;border-radius:10px;border:1px solid var(--border);font:inherit}
+.hint{font-size:.78rem;color:var(--muted);line-height:1.7}
+footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;color:var(--muted)}
+
+/* ---------- لوحة التحميل الأولية (تمنع أي تفاعل حتى الاتصال بالخادم) ---------- */
+#bootOverlay{position:fixed;inset:0;background:var(--gradient-royal);display:grid;place-items:center;z-index:999;transition:opacity .5s ease, visibility .5s ease}
+#bootOverlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#bootOverlay .box{text-align:center;color:var(--sand)}
+#bootOverlay .spinner{width:56px;height:56px;border-radius:50%;border:4px solid oklch(1 0 0/.25);border-top-color:var(--gold);margin:0 auto 18px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#bootOverlay .msg{font-family:"Cormorant Garamond",serif;font-size:1.4rem}
+#bootOverlay .sub{font-size:.82rem;opacity:.75;margin-top:8px}
+
+/* ---------- إشعار طلب جديد منبثق ---------- */
+#newOrderPop{position:fixed;top:20px;inset-inline-end:20px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.pop-card{background:var(--card,#fff);border:1px solid var(--gold);border-inline-start:5px solid var(--green);border-radius:14px;box-shadow:var(--shadow-soft,0 10px 30px rgba(0,0,0,.15));padding:14px 16px;animation:popIn .35s var(--ease,ease-out);cursor:pointer}
+.pop-card:hover{filter:brightness(0.98)}
+@keyframes popIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+.pop-card .t{font-weight:700;color:var(--green);font-size:.95rem;display:flex;align-items:center;gap:6px}
+.pop-card .d{font-size:.82rem;color:var(--muted);margin-top:4px}
+.pop-card .close{position:absolute;inset-inline-end:8px;top:6px;background:none;border:none;font-size:.9rem;color:var(--muted);cursor:pointer}
+.pop-card{position:relative}
+@media print{header.site,.toolbar,.stats,.overlay,footer.site,.actions,#bootOverlay,#newOrderPop{display:none!important}aside.panel{position:static;transform:none;width:100%;box-shadow:none}}
+</style>
+</head>
+<body>
+
+<div id="bootOverlay">
+  <div class="box">
+    <div class="spinner"></div>
+    <div class="msg">جاري الاتصال بالخادم…</div>
+    <div class="sub">يرجى الانتظار، لا يمكن استخدام اللوحة حتى اكتمال الاتصال</div>
+  </div>
+</div>
+
+<div id="newOrderPop"></div>
+
+<header class="site">
+  <div class="wrap hrow">
+    <div class="brand">
+      <div class="dot">✦</div>
+      <div>
+        <div class="n">روابي فرح</div>
+        <small>لوحة الطلبات</small>
+      </div>
+    </div>
+    <div class="hactions">
+      <span class="live off" id="live"><i></i><span id="liveTxt">غير متصل</span></span>
+      <select class="sel" id="auto" aria-label="التحديث التلقائي">
+        <option value="0">بدون تحديث</option>
+        <option value="15000" selected>كل ١٥ ثانية</option>
+        <option value="30000">كل ٣٠ ثانية</option>
+        <option value="60000">كل دقيقة</option>
+      </select>
+      <button class="btn btn-ghost" onclick="loadOrders()">تحديث ↻</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">تصدير CSV</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="stats" aria-label="ملخص">
+    <div class="stat"><div class="k">طلبات اليوم</div><div class="v" id="stToday">0</div></div>
+    <div class="stat"><div class="k">جديدة</div><div class="v" id="stNew">0</div></div>
+    <div class="stat"><div class="k">قيد التحضير</div><div class="v" id="stPrep">0</div></div>
+    <div class="stat"><div class="k">مبيعات اليوم</div><div class="v" id="stSales">0.00</div></div>
+  </section>
+
+  <div class="toolbar">
+    <div class="filters" id="filters"></div>
+    <input class="search" id="q" type="search" placeholder="ابحث برقم الطلب أو الاسم أو الهاتف…" aria-label="بحث" />
+    <select class="sel" id="sort" aria-label="ترتيب">
+      <option value="new">الأحدث أولًا</option>
+      <option value="old">الأقدم أولًا</option>
+      <option value="high">الأعلى قيمة</option>
+    </select>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th>رقم الطلب</th><th>الوقت</th><th>العميل</th><th>الهاتف</th>
+          <th>المدينة</th><th>القطع</th><th>الإجمالي</th><th>الدفع</th><th>الحالة</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>لا توجد طلبات مطابقة.</div>
+  </div>
+</main>
+
+<footer class="site">© <span id="yr"></span> روابي فرح — لوحة إدارة الطلبات.</footer>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<aside class="panel" id="panel" aria-label="تفاصيل الطلب">
+  <header><h2 id="pTitle">الطلب</h2><button class="btn btn-ghost btn-sm" style="color:#fff;border-color:oklch(1 0 0/.4)" onclick="closePanel()">إغلاق ✕</button></header>
+  <div class="body" id="pBody"></div>
+  <footer>
+    <div class="actions" id="pActions"></div>
+    <button class="btn btn-ghost" onclick="window.print()">طباعة الفاتورة</button>
+  </footer>
+</aside>
+
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================== إعدادات ==================
+ * API متوقع من Apps Script:
+ *   GET  ?action=list&token=...            -> {ok:true, orders:[...]}
+ *   POST {action:"status", number, status} -> {ok:true}
+ * شكل الطلب المتوافق مع الموقع:
+ * {number, at, total, items:[{id,name,price,qty}],
+ *  customer:{name,phone,city,address,slot,pay}, status}
+ * ============================================ */
+/* رابط خادم Google Apps Script ثابت بالكود مباشرة — لا حاجة لأي إعداد من المستخدم.
+   إذا احتجت تغييره مستقبلاً، بدّل القيمة هنا فقط. */
+const CFG = {
+  url: "https://script.google.com/macros/s/AKfycbwfKF_zKI7Purclhy2Ge_nGQ69AXdyCLGSbFDUqTJqdPI1HLMAWODpELBg80sIjC8gnuA/exec",
+  token: ""
+};
+
+
+const STATUSES = [
+  {k:"new",    t:"جديد",         c:"s-new"},
+  {k:"prep",   t:"قيد التحضير",  c:"s-prep"},
+  {k:"out",    t:"خرج للتوصيل",  c:"s-out"},
+  {k:"done",   t:"تم التسليم",   c:"s-done"},
+  {k:"cancel", t:"ملغي",         c:"s-cancel"}
+];
+const stOf = k => STATUSES.find(s=>s.k===k) || STATUSES[0];
+
+let ORDERS = [];
+let filter = "all";
+let timer = null;
+let current = null;
+
+const $ = s => document.querySelector(s);
+const fmt = n => (Number(n)||0).toFixed(2) + " د.أ";
+const dt = v => { const d = new Date(v); return isNaN(d) ? "—" : d.toLocaleString("ar-JO",{dateStyle:"short",timeStyle:"short"}); };
+const isToday = v => { const d=new Date(v), n=new Date(); return d.toDateString()===n.toDateString(); };
+
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+function setLive(on,txt){ const l=$("#live"); l.classList.toggle("off",!on); $("#liveTxt").textContent=txt; }
+
+/* ---------- تحميل الطلبات ---------- */
+/* واجهة Apps Script:
+ *   GET  ?sheet=Orders                      -> {success:true, data:[...]}
+ *   GET  ?sheet=OrderItems&order_id=...     -> عناصر الطلب (إن وُجد التبويب)
+ *   GET  ?sheet=Customers                   -> بيانات العملاء
+ *   POST {sheet:"Orders",action:"update",id,payload:{status}}
+ */
+async function api(params, tries){
+  tries = tries || 2;
+  const u = new URL(CFG.url);
+  Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  if(CFG.token) u.searchParams.set("token",CFG.token);
+  u.searchParams.set("_", Date.now());
+  let lastErr;
+  for(let i=0;i<tries;i++){
+    try{
+      const r = await fetch(u.toString(), { cache: "no-store" });
+      const text = await r.text();
+      let j;
+      try{ j = JSON.parse(text); }
+      catch(parseErr){ throw new Error("رد غير صالح من الخادم (على الأغلب تحميل زائد مؤقت)"); }
+      if(j && j.success===false) throw new Error(j.error||"خطأ من الخادم");
+      return Array.isArray(j) ? j : (j.data ?? j.orders ?? []);
+    }catch(e){
+      lastErr = e;
+      if(i < tries-1) await new Promise(res=>setTimeout(res, 400)); // انتظار قصير قبل إعادة المحاولة
+    }
+  }
+  throw lastErr;
+}
+
+let consecutiveFails = 0;
+let knownOrderIds = null; // null = لسا ما صار أول تحميل ناجح (نتفادى التنبيه على الطلبات القديمة)
+
+/* ---------- صوت تنبيه (مولَّد بالكامل، بدون ملف خارجي) ---------- */
+let audioCtx = null;
+function playNotifySound(){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    [0, .16].forEach((delay, i)=>{
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = i===0 ? 880 : 1175;
+      gain.gain.setValueAtTime(0, now+delay);
+      gain.gain.linearRampToValueAtTime(.35, now+delay+.02);
+      gain.gain.exponentialRampToValueAtTime(.001, now+delay+.35);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now+delay); osc.stop(now+delay+.4);
+    });
+  }catch(e){ /* بعض المتصفحات تمنع الصوت قبل أي تفاعل من المستخدم — تجاهل بصمت */ }
+}
+
+/* ---------- إشعار منبثق داخل الصفحة لكل طلب جديد ---------- */
+function showNewOrderPopup(o){
+  const wrap = $("#newOrderPop");
+  const el = document.createElement("div");
+  el.className = "pop-card";
+  el.innerHTML = `
+    <button class="close" aria-label="إغلاق">✕</button>
+    <div class="t">🔔 طلب جديد — ${o.number}</div>
+    <div class="d">${o.customer.name} · ${fmt(o.total)}</div>`;
+  el.querySelector(".close").onclick = (ev)=>{ ev.stopPropagation(); el.remove(); };
+  el.onclick = ()=>{ el.remove(); openPanel(o.number); };
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(), 8000);
+}
+
+function detectAndNotifyNewOrders(newOrders){
+  const ids = new Set(newOrders.map(o=>o.rowId));
+  if(knownOrderIds === null){ knownOrderIds = ids; return; } // أول تحميل: لا تنبيه، فقط تسجيل الحالة الحالية
+  const fresh = newOrders.filter(o=>!knownOrderIds.has(o.rowId));
+  if(fresh.length){
+    playNotifySound();
+    fresh.forEach(showNewOrderPopup);
+  }
+  knownOrderIds = ids;
+}
+
+async function loadOrders(){
+  let ok = false;
+  if(CFG.url){
+    try{
+      // طلب واحد فقط يُرجع Orders + OrderItems + Customers معًا (بدل 3 طلبات منفصلة) — أسرع بكثير
+      const bundle = await api({sheet:"Orders", action:"ordersBundle"});
+      const orders = bundle.orders || [];
+      const items = bundle.items || [];
+      const customers = bundle.customers || [];
+      const byCustomer = {};
+      (customers||[]).forEach(c=>{ if(c && c.id!=null) byCustomer[String(c.id)] = c; });
+      const byOrder = {};
+      (items||[]).forEach(i=>{
+        const k = String(i.order_id ?? i.orderId ?? i.order ?? "");
+        (byOrder[k] = byOrder[k] || []).push(i);
+      });
+      const newOrders = (orders||[]).map(o=>normalize(o, byOrder, byCustomer));
+      detectAndNotifyNewOrders(newOrders);
+      ORDERS = newOrders;
+      consecutiveFails = 0;
+      setLive(true,"متصل بالخادم");
+      ok = true;
+    }catch(e){
+      consecutiveFails++;
+      // فشل لحظي واحد لا يعني انقطاع فعلي — نتجاهله بصمت ونعيد المحاولة بالدورة القادمة
+      if(consecutiveFails >= 3){
+        setLive(false,"تعذر الاتصال — بيانات محلية");
+        toast("تعذّر جلب الطلبات: "+e.message);
+        ORDERS = local().map(o=>normalize(o));
+      }
+      // أقل من 3 محاولات فاشلة متتالية: نبقي آخر بيانات ناجحة كما هي في ORDERS بدون تغيير الواجهة
+    }
+  }else{
+    setLive(false,"وضع محلي");
+    ORDERS = local().map(o=>normalize(o));
+    ok = true; // لا يوجد خادم أصلاً، نعتبر "الوضع المحلي" جاهزًا حتى لا تعلق لوحة التحميل للأبد
+  }
+  render();
+  return ok;
+}
+const local = () => { try{ return JSON.parse(localStorage.getItem("rf_orders")||"[]"); }catch{ return []; } };
+
+/* خريطة الحالات: يقبل العربية أو الإنجليزية القادمة من الشيت */
+const STATUS_MAP = {
+  "new":"new","pending":"new","جديد":"new","قيد المراجعة":"new",
+  "prep":"prep","preparing":"prep","processing":"prep","قيد التحضير":"prep",
+  "out":"out","shipped":"out","delivering":"out","خرج للتوصيل":"out",
+  "done":"done","delivered":"done","completed":"done","تم التسليم":"done",
+  "cancel":"cancel","cancelled":"cancel","canceled":"cancel","ملغي":"cancel"
+};
+const mapStatus = v => STATUS_MAP[String(v||"").trim().toLowerCase()] || STATUS_MAP[String(v||"").trim()] || "new";
+
+function parseItems(v){
+  if(Array.isArray(v)) return v;
+  if(typeof v === "string" && v.trim().startsWith("[")){ try{ return JSON.parse(v); }catch{ return []; } }
+  return [];
+}
+
+/* يوحّد أي صيغة عنصر (من items المضمّنة في الطلب أو من شيت OrderItems المنفصل)
+   إلى الشكل {id,name,price,qty} الذي تعتمده بقية اللوحة */
+function normalizeItem_(i){
+  return {
+    id: i.productId ?? i.product_id ?? i.id,
+    name: i.productName ?? i.product_name ?? i.name ?? i.title ?? i.productId ?? i.id,
+    price: Number(i.price ?? i.unit_price ?? 0),
+    qty: Number(i.quantity ?? i.qty ?? 1)
+  };
+}
+
+function normalize(o, byOrder, byCustomer){
+  const rowId = o.id ?? o.order_id ?? o.number ?? "";
+  const c = o.customer || (byCustomer && byCustomer[String(o.customerId ?? o.customer_id ?? "")]) || {};
+  let items = parseItems(o.items).map(normalizeItem_);
+  if(!items.length && byOrder) {
+    items = (byOrder[String(rowId)] || byOrder[String(o.orderNumber ?? o.order_number ?? "")] || []).map(normalizeItem_);
+  }
+  return {
+    rowId: String(rowId),
+    number: o.orderNumber ?? o.order_number ?? o.number ?? rowId ?? "—",
+    at: o.createdAt ?? o.at ?? o.created_at ?? o.date ?? o.timestamp ?? "",
+    items,
+    total: Number(o.total ?? o.total_amount ?? o.grand_total ?? 0),
+    status: mapStatus(o.status),
+    note: o.notes ?? o.note ?? c.note ?? "",
+    customer: {
+      name: c.name || c.full_name || o.customerName || o.customer_name || o.name || "—",
+      phone: c.phone || o.customerPhone || o.customer_phone || o.phone || "—",
+      city: c.city || o.city || "—",
+      address: o.shippingAddress || o.address || o.shipping_address || c.address || "—",
+      slot: o.deliverySlot || o.slot || o.delivery_slot || o.delivery_time || "—",
+      pay: o.paymentMethod || o.pay || o.payment_method || o.payment || "—"
+    }
+  };
+}
+
+/* ---------- تحديث الحالة ---------- */
+const SERVER_STATUS = {new:"new",prep:"preparing",out:"shipped",done:"delivered",cancel:"cancelled"};
+
+async function setStatus(number, status){
+  const o = ORDERS.find(x=>String(x.number)===String(number)); if(!o) return;
+  o.status = status;
+  render(); if(current && String(current.number)===String(number)) openPanel(number);
+  if(CFG.url){
+    try{
+      const r = await fetch(CFG.url,{
+        method:"POST",
+        headers:{"Content-Type":"text/plain;charset=utf-8"}, // يتجنب preflight مع Apps Script
+        body: JSON.stringify({
+          sheet:"Orders", action:"update", id:o.rowId,
+          payload:{ status: SERVER_STATUS[status], updated_at: new Date().toISOString() },
+          token: CFG.token
+        })
+      });
+      const j = await r.json();
+      toast(j.success ? "تم تحديث الحالة على الخادم" : ("فشل التحديث: "+(j.error||"")));
+    }catch(e){ toast("تعذّر تحديث الخادم — حُفظ محليًا"); saveLocal(); }
+  }else{ saveLocal(); toast("تم تحديث الحالة"); }
+}
+function saveLocal(){
+  const all = local();
+  ORDERS.forEach(o=>{ const m = all.find(x=>String(x.number||x.id)===String(o.number)); if(m) m.status = o.status; });
+  localStorage.setItem("rf_orders", JSON.stringify(all));
+}
+
+/* ---------- العرض ---------- */
+function chips(){
+  const counts = k => k==="all" ? ORDERS.length : ORDERS.filter(o=>o.status===k).length;
+  $("#filters").innerHTML = [{k:"all",t:"الكل"},...STATUSES]
+    .map(s=>`<button class="chip ${filter===s.k?"active":""}" onclick="filter='${s.k}';render()">${s.t} (${counts(s.k)})</button>`).join("");
+}
+
+function view(){
+  const q = ($("#q").value||"").trim().toLowerCase();
+  let list = ORDERS.filter(o=>{
+    if(filter!=="all" && o.status!==filter) return false;
+    if(!q) return true;
+    return [o.number,o.customer.name,o.customer.phone,o.customer.city].join(" ").toLowerCase().includes(q);
+  });
+  const s = $("#sort").value;
+  list.sort((a,b)=> s==="high" ? b.total-a.total
+    : s==="old" ? new Date(a.at)-new Date(b.at)
+    : new Date(b.at)-new Date(a.at));
+  return list;
+}
+
+function render(){
+  chips();
+  const today = ORDERS.filter(o=>isToday(o.at));
+  $("#stToday").textContent = today.length;
+  $("#stNew").textContent   = ORDERS.filter(o=>o.status==="new").length;
+  $("#stPrep").textContent  = ORDERS.filter(o=>o.status==="prep").length;
+  $("#stSales").textContent = today.filter(o=>o.status!=="cancel").reduce((s,o)=>s+o.total,0).toFixed(2);
+
+  const list = view();
+  $("#empty").hidden = list.length>0;
+  $("#rows").innerHTML = list.map(o=>{
+    const s = stOf(o.status);
+    const pcs = o.items.reduce((n,i)=>n+(Number(i.qty)||1),0);
+    return `<tr onclick="openPanel('${String(o.number).replace(/'/g,"")}')">
+      <td class="num">#${o.number}</td>
+      <td class="muted">${dt(o.at)}</td>
+      <td>${o.customer.name}</td>
+      <td class="muted" dir="ltr" style="text-align:start">${o.customer.phone}</td>
+      <td>${o.customer.city}</td>
+      <td>${pcs}</td>
+      <td class="num">${fmt(o.total)}</td>
+      <td class="muted">${o.customer.pay}</td>
+      <td><span class="pill ${s.c}">${s.t}</span></td>
+    </tr>`;
+  }).join("");
+}
+
+/* ---------- اللوحة الجانبية ---------- */
+function openPanel(number){
+  const o = ORDERS.find(x=>String(x.number)===String(number)); if(!o) return;
+  current = o;
+  $("#pTitle").textContent = "الطلب #"+o.number;
+  const c = o.customer;
+  $("#pBody").innerHTML = `
+    <div class="kv"><span>الحالة والوقت</span><strong><span class="pill ${stOf(o.status).c}">${stOf(o.status).t}</span> · ${dt(o.at)}</strong></div>
+    <div class="kv"><span>العميل</span><strong>${c.name}</strong><span dir="ltr" style="text-transform:none;letter-spacing:0;color:var(--muted)">${c.phone}</span></div>
+    <div class="kv"><span>العنوان</span><strong>${c.city}</strong><span style="text-transform:none;letter-spacing:0;color:var(--muted)">${c.address}</span></div>
+    <div class="kv"><span>موعد التوصيل</span><strong>${c.slot}</strong></div>
+    <div class="kv"><span>طريقة الدفع</span><strong>${c.pay}</strong></div>
+    ${o.note?`<div class="kv"><span>ملاحظات</span><strong style="font-weight:400">${o.note}</strong></div>`:""}
+    <div>
+      <div class="kv" style="margin-bottom:8px"><span>الأصناف</span></div>
+      <div class="lines">${o.items.map(i=>`<div class="line"><span>${i.name||i.id} × ${i.qty||1}</span><b>${fmt((Number(i.price)||0)*(Number(i.qty)||1))}</b></div>`).join("") || '<div class="line">—</div>'}</div>
+    </div>
+    <div class="kv"><div class="rowsum total"><span>الإجمالي</span><span>${fmt(o.total)}</span></div></div>
+  `;
+  $("#pActions").innerHTML = STATUSES.map(s=>
+    `<button class="btn ${o.status===s.k?"btn-primary":"btn-ghost"} btn-sm" onclick="setStatus('${o.number}','${s.k}')">${s.t}</button>`
+  ).join("") + `<a class="btn btn-gold btn-sm" target="_blank" rel="noopener" href="https://wa.me/${String(c.phone).replace(/[^\d]/g,"")}">واتساب العميل</a>`;
+  $("#panel").classList.add("open"); $("#overlay").classList.add("open");
+}
+function closePanel(){ $("#panel").classList.remove("open"); $("#overlay").classList.remove("open"); current=null; }
+
+/* ---------- تصدير ---------- */
+function exportCSV(){
+  const rows = [["رقم الطلب","التاريخ","العميل","الهاتف","المدينة","العنوان","الموعد","الدفع","الأصناف","الإجمالي","الحالة"]];
+  view().forEach(o=>rows.push([
+    o.number, dt(o.at), o.customer.name, o.customer.phone, o.customer.city, o.customer.address,
+    o.customer.slot, o.customer.pay,
+    o.items.map(i=>`${i.name||i.id}×${i.qty||1}`).join(" | "),
+    o.total.toFixed(2), stOf(o.status).t
+  ]));
+  const csv = "\uFEFF" + rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  a.download = `orders-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  toast("تم تصدير الملف");
+}
+
+/* ---------- إعدادات ---------- */
+/* رابط الخادم مثبَّت الآن في المتغيّر CFG بأعلى الملف مباشرة (لا نافذة إعدادات) */
+
+function startAuto(){
+  clearInterval(timer);
+  const ms = +$("#auto").value;
+  if(ms) timer = setInterval(loadOrders, ms);
+}
+
+/* ---------- بيانات تجريبية عند الفراغ ---------- */
+function seedIfEmpty(){
+  if(local().length) return;
+  const now = Date.now();
+  const demo = [
+    {number:"RF-1041", at:new Date(now-1000*60*12).toISOString(), status:"new",
+     items:[{id:"p1",name:"كرواسون بالزبدة",price:1.2,qty:6},{id:"p2",name:"خبز حرفي بالخميرة",price:2.5,qty:1}],
+     total:9.7, customer:{name:"سارة العمري",phone:"+962790000001",city:"عمّان",address:"عبدون، شارع الأمير هاشم، بناية ١٢",slot:"٩ - ١٢ صباحًا",pay:"الدفع عند الاستلام"}},
+    {number:"RF-1040", at:new Date(now-1000*60*55).toISOString(), status:"prep",
+     items:[{id:"g1",name:"علبة هدايا فاخرة",price:24,qty:1}],
+     total:26.5, customer:{name:"محمد نصار",phone:"+962791111222",city:"الزرقاء",address:"حي الرشيد، عمارة ٤",slot:"١٢ - ٣ ظهرًا",pay:"بطاقة عند التسليم"}},
+    {number:"RF-1039", at:new Date(now-1000*60*60*20).toISOString(), status:"done",
+     items:[{id:"c1",name:"كيك التمر والجوز",price:8,qty:2}],
+     total:18.5, customer:{name:"لينا خالد",phone:"+962795555333",city:"إربد",address:"شارع الجامعة، مقابل البوابة الشمالية",slot:"٣ - ٦ مساءً",pay:"الدفع عند الاستلام"}}
+  ];
+  localStorage.setItem("rf_orders", JSON.stringify(demo));
+}
+
+$("#yr").textContent = new Date().getFullYear();
+$("#q").addEventListener("input", render);
+$("#sort").addEventListener("change", render);
+$("#auto").addEventListener("change", startAuto);
+document.addEventListener("keydown", e => { if(e.key==="Escape") closePanel(); });
+seedIfEmpty();
+
+/* لا يُخفى overlay التحميل، ولا يبدأ التحديث الدوري، إلا بعد نجاح اتصال فعلي بالخادم */
+(async function boot(){
+  let connected = await loadOrders();
+  while(!connected){
+    await new Promise(res=>setTimeout(res, 1000));
+    connected = await loadOrders();
+  }
+  $("#bootOverlay").classList.add("hidden");
+  startAuto();
+})();
+</script>
+</body>
+</html>
