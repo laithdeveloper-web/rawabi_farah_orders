@@ -38,7 +38,7 @@ a{color:inherit;text-decoration:none}
 header.site{position:sticky;top:0;z-index:60;background:var(--glass);backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid oklch(1 0 0/.5);box-shadow:var(--shadow-soft)}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
-.brand .dot{width:42px;height:42px;border-radius:50%;background:var(--gradient-royal);display:grid;place-items:center;color:var(--gold-soft);font-size:1.1rem}
+.brand .logo{width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-soft);border:2px solid var(--gold-soft);background:#fff}
 .brand .n{font-family:"Cormorant Garamond",serif;font-size:1.25rem;font-weight:700;color:var(--green);line-height:1}
 .brand small{color:var(--muted);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase}
 .hactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -99,7 +99,9 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
 #bootOverlay{position:fixed;inset:0;background:var(--gradient-royal);display:grid;place-items:center;z-index:999;transition:opacity .5s ease, visibility .5s ease}
 #bootOverlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
 #bootOverlay .box{text-align:center;color:var(--sand)}
-#bootOverlay .spinner{width:56px;height:56px;border-radius:50%;border:4px solid oklch(1 0 0/.25);border-top-color:var(--gold);margin:0 auto 18px;animation:spin 1s linear infinite}
+#bootOverlay .boot-logo{width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 22px;box-shadow:0 10px 40px oklch(0 0 0/.35);border:3px solid var(--gold-soft);background:#fff;animation:logoPulse 2.4s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+#bootOverlay .spinner{width:34px;height:34px;border-radius:50%;border:3px solid oklch(1 0 0/.25);border-top-color:var(--gold);margin:0 auto 14px;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #bootOverlay .msg{font-family:"Cormorant Garamond",serif;font-size:1.4rem}
 #bootOverlay .sub{font-size:.82rem;opacity:.75;margin-top:8px}
@@ -113,13 +115,50 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
 .pop-card .d{font-size:.82rem;color:var(--muted);margin-top:4px}
 .pop-card .close{position:absolute;inset-inline-end:8px;top:6px;background:none;border:none;font-size:.9rem;color:var(--muted);cursor:pointer}
 .pop-card{position:relative}
-@media print{header.site,.toolbar,.stats,.overlay,footer.site,.actions,#bootOverlay,#newOrderPop{display:none!important}aside.panel{position:static;transform:none;width:100%;box-shadow:none}}
+/* ---------- فاتورة الطباعة المخصصة (طلب واحد محدد فقط) ---------- */
+#invoicePrint{display:none}
+.inv-page{width:100%;max-width:480px;margin:0 auto;background:#fff;color:#1c2b22;font-family:"Cairo","Manrope",sans-serif;padding:26px 24px}
+.inv-head{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--gold);padding-bottom:16px;margin-bottom:18px}
+.inv-logo{width:64px;height:64px;min-width:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-soft)}
+.inv-brand{flex:1}
+.inv-brand-name{font-family:"Cormorant Garamond",serif;font-size:1.55rem;font-weight:700;color:var(--green-deep);line-height:1.15}
+.inv-brand-tag{font-size:.72rem;color:var(--muted);letter-spacing:.05em;margin-top:2px}
+.inv-doc-title{text-align:end}
+.inv-doc-title>div:first-child{font-family:"Cormorant Garamond",serif;font-size:1.2rem;font-weight:700;color:var(--clay)}
+.inv-num{font-size:1.05rem;font-weight:700;color:var(--green)}
+.inv-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.inv-meta>div{background:var(--sand);border-radius:8px;padding:8px 12px}
+.inv-meta span,.inv-cust-grid span{display:block;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);margin-bottom:2px}
+.inv-meta b,.inv-cust-grid b{font-size:.85rem;font-weight:600}
+.inv-sect-title{font-size:.76rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.12em;margin:16px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.inv-cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:4px}
+.inv-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.84rem}
+.inv-table th{background:var(--green-deep);color:#fff;padding:8px 10px;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;text-align:start}
+.inv-table th:last-child,.inv-table td:last-child{text-align:end}
+.inv-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.inv-table tr:nth-child(even) td{background:var(--sand)}
+.inv-totals{margin-top:14px;display:flex;justify-content:flex-end}
+.inv-totals .row{min-width:230px;display:flex;justify-content:space-between;align-items:center;background:var(--green);color:#fff;padding:10px 16px;border-radius:10px;font-weight:700;font-size:1.05rem;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+.inv-note{margin-top:14px;background:var(--sand);border-radius:8px;padding:10px 14px;font-size:.82rem;color:#1c2b22;line-height:1.6}
+.inv-footer{margin-top:26px;text-align:center;border-top:1px dashed var(--border);padding-top:14px}
+.inv-footer .thanks{font-family:"Cormorant Garamond",serif;font-size:1.15rem;color:var(--green-deep);font-weight:700}
+.inv-footer .contact{font-size:.74rem;color:var(--muted);margin-top:4px}
+
+@media print{
+  body *{visibility:hidden!important}
+  #invoicePrint,#invoicePrint *{visibility:visible!important}
+  #invoicePrint{display:block!important;position:absolute;inset-inline-start:0;top:0;width:100%}
+  #invoicePrint,#invoicePrint *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  .inv-page{max-width:100%;padding:10mm 9mm}
+  @page{size:A5;margin:0}
+}
 </style>
 </head>
 <body>
 
 <div id="bootOverlay">
   <div class="box">
+    <img class="boot-logo" src="https://i.postimg.cc/j2nHdphk/Rawabi-Farah.jpg" alt="روابي فرح" />
     <div class="spinner"></div>
     <div class="msg">جاري الاتصال بالخادم…</div>
     <div class="sub">يرجى الانتظار، لا يمكن استخدام اللوحة حتى اكتمال الاتصال</div>
@@ -131,7 +170,7 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
 <header class="site">
   <div class="wrap hrow">
     <div class="brand">
-      <div class="dot">✦</div>
+      <img class="logo" src="https://i.postimg.cc/j2nHdphk/Rawabi-Farah.jpg" alt="روابي فرح" />
       <div>
         <div class="n">روابي فرح</div>
         <small>لوحة الطلبات</small>
@@ -139,12 +178,6 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
     </div>
     <div class="hactions">
       <span class="live off" id="live"><i></i><span id="liveTxt">غير متصل</span></span>
-      <select class="sel" id="auto" aria-label="التحديث التلقائي">
-        <option value="0">بدون تحديث</option>
-        <option value="15000" selected>كل ١٥ ثانية</option>
-        <option value="30000">كل ٣٠ ثانية</option>
-        <option value="60000">كل دقيقة</option>
-      </select>
       <button class="btn btn-ghost" onclick="loadOrders()">تحديث ↻</button>
       <button class="btn btn-ghost" onclick="exportCSV()">تصدير CSV</button>
     </div>
@@ -191,10 +224,11 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
   <div class="body" id="pBody"></div>
   <footer>
     <div class="actions" id="pActions"></div>
-    <button class="btn btn-ghost" onclick="window.print()">طباعة الفاتورة</button>
+    <button class="btn btn-ghost" onclick="printInvoice()">طباعة الفاتورة</button>
   </footer>
 </aside>
 
+<div id="invoicePrint"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -211,8 +245,17 @@ footer.site{margin-top:40px;padding:24px;text-align:center;font-size:.78rem;colo
    إذا احتجت تغييره مستقبلاً، بدّل القيمة هنا فقط. */
 const CFG = {
   url: "https://script.google.com/macros/s/AKfycbwfKF_zKI7Purclhy2Ge_nGQ69AXdyCLGSbFDUqTJqdPI1HLMAWODpELBg80sIjC8gnuA/exec",
+  /* رابط سيرفر الإدارة الموحّد (يربط admin.html بـ menu.html و orders.html) — إضافة جديدة.
+     orders.html لا يستدعي هذا الرابط مباشرة: قراءة وتحديث الطلبات هنا تظل حصرًا عبر url أعلاه
+     (وهو سيرفر الطلبات المخصص). لوحة الإدارة (admin.html) تقرأ الطلبات لعرض المبيعات/الأرباح/التقارير
+     بشكل مستقل عبر نفس هذا الرابط (action=getOrders) من نفس قاعدة البيانات — دون أي تدخل من orders.html.
+     أُبقي الرابط معرّفًا هنا للتوثيق ولأي استخدام مستقبلي فقط. */
+  adminUrl: "https://script.google.com/macros/s/AKfycbwSTCKtmtdBDjIxEGSlxl13zOrBP5veWeyGPRD3CkoU6PgFD8C6Hoe1KEHQRE50re2nAw/exec",
   token: ""
 };
+
+/* شعار روابي فرح — يُستخدم في شاشة التحميل، الرأس، والفاتورة */
+const LOGO_URL = "https://i.postimg.cc/j2nHdphk/Rawabi-Farah.jpg";
 
 
 const STATUSES = [
@@ -322,6 +365,7 @@ async function loadOrders(){
   if(CFG.url){
     try{
       // طلب واحد فقط يُرجع Orders + OrderItems + Customers معًا (بدل 3 طلبات منفصلة) — أسرع بكثير
+      // هذه العملية مخصصة لسيرفر الطلبات (CFG.url) فقط
       const bundle = await api({sheet:"Orders", action:"ordersBundle"});
       const orders = bundle.orders || [];
       const items = bundle.items || [];
@@ -421,14 +465,16 @@ async function setStatus(number, status){
   render(); if(current && String(current.number)===String(number)) openPanel(number);
   if(CFG.url){
     try{
+      const body = JSON.stringify({
+        sheet:"Orders", action:"update", id:o.rowId,
+        payload:{ status: SERVER_STATUS[status], updated_at: new Date().toISOString() },
+        token: CFG.token
+      });
+      // يُرسل التحديث فقط إلى سيرفر الطلبات (CFG.url) — هذه العملية مخصصة له حصرًا
       const r = await fetch(CFG.url,{
         method:"POST",
         headers:{"Content-Type":"text/plain;charset=utf-8"}, // يتجنب preflight مع Apps Script
-        body: JSON.stringify({
-          sheet:"Orders", action:"update", id:o.rowId,
-          payload:{ status: SERVER_STATUS[status], updated_at: new Date().toISOString() },
-          token: CFG.token
-        })
+        body: body
       });
       const j = await r.json();
       toast(j.success ? "تم تحديث الحالة على الخادم" : ("فشل التحديث: "+(j.error||"")));
@@ -515,6 +561,62 @@ function openPanel(number){
 }
 function closePanel(){ $("#panel").classList.remove("open"); $("#overlay").classList.remove("open"); current=null; }
 
+/* ---------- طباعة فاتورة الطلب المحدد فقط (تصميم مخصص) ---------- */
+function printInvoice(){
+  if(!current){ toast("اختر طلبًا أولاً"); return; }
+  const o = current, c = o.customer;
+  const itemsRows = (o.items||[]).map(i=>{
+    const price = Number(i.price)||0, qty = Number(i.qty)||1;
+    return `<tr><td>${i.name||i.id}</td><td>${qty}</td><td>${fmt(price)}</td><td>${fmt(price*qty)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" style="text-align:center;color:var(--muted)">لا توجد أصناف</td></tr>`;
+
+  $("#invoicePrint").innerHTML = `
+    <div class="inv-page">
+      <div class="inv-head">
+        <img class="inv-logo" src="${LOGO_URL}" alt="روابي فرح" />
+        <div class="inv-brand">
+          <div class="inv-brand-name">روابي فرح</div>
+          <div class="inv-brand-tag">مخبوزات وحلويات فاخرة</div>
+        </div>
+        <div class="inv-doc-title">
+          <div>فاتورة</div>
+          <div class="inv-num">#${o.number}</div>
+        </div>
+      </div>
+
+      <div class="inv-meta">
+        <div><span>التاريخ والوقت</span><b>${dt(o.at)}</b></div>
+        <div><span>الحالة</span><b>${stOf(o.status).t}</b></div>
+        <div><span>طريقة الدفع</span><b>${c.pay}</b></div>
+        <div><span>موعد التوصيل</span><b>${c.slot}</b></div>
+      </div>
+
+      <div class="inv-sect-title">بيانات العميل</div>
+      <div class="inv-cust-grid">
+        <div><span>الاسم</span><b>${c.name}</b></div>
+        <div><span>الهاتف</span><b dir="ltr">${c.phone}</b></div>
+        <div><span>المدينة</span><b>${c.city}</b></div>
+        <div><span>العنوان</span><b>${c.address}</b></div>
+      </div>
+
+      <table class="inv-table">
+        <thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+        <tbody>${itemsRows}</tbody>
+      </table>
+
+      <div class="inv-totals"><div class="row"><span>الإجمالي الكلي</span><span>${fmt(o.total)}</span></div></div>
+
+      ${o.note ? `<div class="inv-note"><b>ملاحظات:</b> ${o.note}</div>` : ""}
+
+      <div class="inv-footer">
+        <div class="thanks">شكرًا لثقتكم بروابي فرح 🌿</div>
+        <div class="contact">نتشرف بخدمتكم دائمًا</div>
+      </div>
+    </div>
+  `;
+  setTimeout(()=>window.print(), 60);
+}
+
 /* ---------- تصدير ---------- */
 function exportCSV(){
   const rows = [["رقم الطلب","التاريخ","العميل","الهاتف","المدينة","العنوان","الموعد","الدفع","الأصناف","الإجمالي","الحالة"]];
@@ -534,10 +636,11 @@ function exportCSV(){
 /* ---------- إعدادات ---------- */
 /* رابط الخادم مثبَّت الآن في المتغيّر CFG بأعلى الملف مباشرة (لا نافذة إعدادات) */
 
+/* التحديث التلقائي مثبَّت على 5 ثوانٍ ولا يمكن للموظف التحكم به */
+const AUTO_REFRESH_MS = 5000;
 function startAuto(){
   clearInterval(timer);
-  const ms = +$("#auto").value;
-  if(ms) timer = setInterval(loadOrders, ms);
+  timer = setInterval(loadOrders, AUTO_REFRESH_MS);
 }
 
 /* ---------- بيانات تجريبية عند الفراغ ---------- */
@@ -561,7 +664,6 @@ function seedIfEmpty(){
 $("#yr").textContent = new Date().getFullYear();
 $("#q").addEventListener("input", render);
 $("#sort").addEventListener("change", render);
-$("#auto").addEventListener("change", startAuto);
 document.addEventListener("keydown", e => { if(e.key==="Escape") closePanel(); });
 seedIfEmpty();
 
